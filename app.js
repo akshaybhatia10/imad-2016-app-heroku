@@ -3,22 +3,39 @@ var express = require("express"),
     bodyParser = require("body-parser"),
     app     = express();
     
+mongoose.Promise = global.Promise;
 app.set("view engine", "ejs");
 mongoose.connect("mongodb://localhost/travelground");
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-//DB Schema defined
+//DB Schema for posts defined
 var travelgroundSchema = new mongoose.Schema({
     name: String,
     image: String,
-    description:String
+    description:String,
+    comments: [
+      {
+         type: mongoose.Schema.Types.ObjectId,
+         ref: "Comment"
+      }
+   ]
 
 });
-
 //DB Model
 var Travelground = mongoose.model("Travelground",travelgroundSchema);
+
+//DB Schema for comments defined
+var commentSchema = new mongoose.Schema({
+    text: String,
+    author: String
+});
+//DB Model
+var Comment = mongoose.model("Comment",commentSchema);
+
+
+//TRAVELGROUND Routes
 
 //Landing Page
 app.get("/",function(req,res){
@@ -31,17 +48,17 @@ app.get("/travelgrounds",function(req,res){
         if(err){
             console.log(err);
         }else{
-            res.render("travelgrounds",{travelgrounds : travelgrounds });
+            res.render("travelgrounds/travelgrounds",{travelgrounds : travelgrounds });
         }
     });
 });
 
-//New Route 
+//NEW Route 
 app.get("/travelgrounds/new", function(req, res) {
-    res.render("new");
+    res.render("travelgrounds/new");
 });
 
-//Create Route 
+//CREATE Route 
 app.post("/travelgrounds", function(req, res) {
             var name = req.body.name;
             var image = req.body.image;
@@ -51,7 +68,6 @@ app.post("/travelgrounds", function(req, res) {
                 name: name,
                 image: image, 
                 description:description 
-                
             };
              Travelground.create(newTravelground, function(err, travelgrounds) {
                 if (err) {
@@ -66,13 +82,50 @@ app.post("/travelgrounds", function(req, res) {
 //SHOW Route - View individual posts
 app.get("/travelgrounds/:id",function(req, res) {
     
-   Travelground.findById(req.params.id,function(err,newTravelground){
+   Travelground.findById(req.params.id).populate("comments").exec(function(err,newTravelground){
        if(err){
            console.log("Error");
        }
        else{
-             res.render("show",{ travelground : newTravelground });
+             res.render("travelgrounds/show",{ travelground : newTravelground });
        }
    });
 });
+
+//COMMENT ROUTES
+
+//NEW - comment
+app.get("/travelgrounds/:id/comments/new",function(req, res) {
+    Travelground.findById(req.params.id,function(err,travelground){
+       if(err){
+           console.log(err);
+       } else{
+            res.render("comments/new",{travelground:travelground}); 
+       }
+
+    });    
+});
+
+//POST - comment
+app.post("travelgrounds/:id/comments",function(req, res) {
+   Travelground.findById(req.params.id,function(err,travelground){
+       if(err){
+           console.log(err);
+           res.redirect("/travelgrounds");
+              } else{
+           Comment.create(req.body.comment,function(err,comment){
+               if(err){
+                   console.log(err);
+               }else
+                 {
+               travelground.comments.push(comment);
+               travelground.save();
+               res.redirect("/travelgrounds/" + travelground._id);
+                 }
+               
+           });
+       }
+    }); 
+});
+
 app.listen(process.env.PORT, process.env.IP);
