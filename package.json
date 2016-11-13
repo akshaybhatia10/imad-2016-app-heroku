@@ -1,0 +1,24 @@
+{
+  "name": "imad-2016",
+  "version": "1.0.0",
+  "description": "An extension of the web app for IMAD-2016 deployed on Heroku (Blog+profile)",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/akshaybhatia10/imad-2016-app-heroku.git"
+  },
+  "author": "akshaybhatia10@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/akshaybhatia10/imad-2016-app-heroku/issues"
+  },
+  "homepage": "https://github.com/akshaybhatia10/imad-2016-app-heroku#readme",
+  "dependencies": {
+    "ejs": "^2.5.2",
+    "express": "^4.14.0"
+  }
+}
