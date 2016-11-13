@@ -35,4 +35,28 @@ app.get("/travelgrounds/new", function(req, res) {
     res.render("new");
 });
 
+//Create Route 
+
+app.post("/campgrounds", function(req, res) {
+            var name = req.body.name;
+            var image = req.body.image;
+            var description = req.body.description;
+            
+            var newCampground = {
+                name: name,
+                image: image, 
+                description:description 
+                
+            };
+            Travelground.create({ name: name , image: image , description:description }, function(err, campground) {
+
+                if (err) {
+                    console.log("Error");
+                    }
+                else {
+                res.redirect("/campgrounds");
+                    }
+            });
+        });
+
 app.listen(process.env.PORT, process.env.IP);
