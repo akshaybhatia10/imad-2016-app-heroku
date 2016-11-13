@@ -27,7 +27,13 @@ app.get("/",function(req,res){
 
 //Posts Page
 app.get("/travelgrounds",function(req,res){
-    res.render("travelgrounds");
+    Travelground.find({},function(err,travelgrounds){
+        if(err){
+            console.log(err);
+        }else{
+            res.render("travelgrounds",{travelgrounds : travelgrounds });
+        }
+    });
 });
 
 //New Route 
@@ -47,7 +53,7 @@ app.post("/travelgrounds", function(req, res) {
                 description:description 
                 
             };
-             Travelground.create(newTravelground, function(err, campground) {
+             Travelground.create(newTravelground, function(err, travelgrounds) {
                 if (err) {
                     console.log("Error");
                     }
