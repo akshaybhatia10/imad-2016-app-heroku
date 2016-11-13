@@ -9,6 +9,7 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+//DB Schema defined
 var travelgroundSchema = new mongoose.Schema({
     name: String,
     image: String,
@@ -16,14 +17,22 @@ var travelgroundSchema = new mongoose.Schema({
 
 });
 
+//DB Model
 var Travelground = mongoose.model("Travelground",travelgroundSchema);
 
+//Landing Page
 app.get("/",function(req,res){
     res.render("index");
 });    
 
+//Posts Page
 app.get("/travelgrounds",function(req,res){
-    res.redirect("/");
+    res.render("travelgrounds");
+});
+
+//New Route 
+app.get("/travelgrounds/new", function(req, res) {
+    res.render("new");
 });
 
 app.listen(process.env.PORT, process.env.IP);
