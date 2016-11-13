@@ -1,16 +1,33 @@
 <% include partials/header %>
 
-<div>
-    <div class="container">
+
+<div class="container">
         <header class="jumbotron">
             <div>
                 <h1>Welcome To Travel Camp </h1>
-                <p>View Our hand-picked travelgrounds from all over the world</p>
+                <p>View Our hand-picked Travelgrounds from all over the world</p>
                 <p>
-                    <a class="btn btn-primary btn-lg " href="/campgrounds/new">Add a new Travelground</a>
+                    <a class="btn btn-primary btn-lg " href="/travelgrounds/new">Add a new Travelground</a>
                 </p>
             </div>
         </header>
+        
+         <div class="row text-center" style="display:flex;flex-wrap: wrap;">
+
+            <% travelgrounds.forEach(function(travelground){ %>
+                <div class="col-md-3 col-sm-6">
+                    <div class="thumbnail">
+                        <img src="<%= travelground.image%>" alt="Image Not Found">
+                    <div class="caption">
+                        <h4><%= travelground.name %></h4>
+                    </div>
+                    <p>
+                        <a href="/travelgrounds/<%= travelground._id %>" class="btn btn-primary">Show Info</a>
+                    </p>
+                    </div>
+                </div>
+                <% }); %>
+        </div>
 </div>
 
  <% include partials/footer %>
