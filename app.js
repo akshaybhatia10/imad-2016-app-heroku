@@ -1,6 +1,8 @@
 var express = require("express"),
     mongoose = require("mongoose"),
     bodyParser = require("body-parser"),
+    Comment     = require("./models/comment"),
+    Travelground = require("./models/travelground"),
     app     = express();
     
 mongoose.Promise = global.Promise;
@@ -10,29 +12,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-//DB Schema for posts defined
-var travelgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String,
-    description:String,
-    comments: [
-      {
-         type: mongoose.Schema.Types.ObjectId,
-         ref: "Comment"
-      }
-   ]
-
-});
-//DB Model
-var Travelground = mongoose.model("Travelground",travelgroundSchema);
-
-//DB Schema for comments defined
-var commentSchema = new mongoose.Schema({
-    text: String,
-    author: String
-});
-//DB Model
-var Comment = mongoose.model("Comment",commentSchema);
 
 
 //TRAVELGROUND Routes
@@ -107,7 +86,7 @@ app.get("/travelgrounds/:id/comments/new",function(req, res) {
 });
 
 //POST - comment
-app.post("travelgrounds/:id/comments",function(req, res) {
+app.post("/travelgrounds/:id/comments",function(req, res) {
    Travelground.findById(req.params.id,function(err,travelground){
        if(err){
            console.log(err);
