@@ -36,27 +36,37 @@ app.get("/travelgrounds/new", function(req, res) {
 });
 
 //Create Route 
-
-app.post("/campgrounds", function(req, res) {
+app.post("/travelgrounds", function(req, res) {
             var name = req.body.name;
             var image = req.body.image;
             var description = req.body.description;
             
-            var newCampground = {
+            var newTravelground = {
                 name: name,
                 image: image, 
                 description:description 
                 
             };
-            Travelground.create({ name: name , image: image , description:description }, function(err, campground) {
-
+             Travelground.create(newTravelground, function(err, campground) {
                 if (err) {
                     console.log("Error");
                     }
                 else {
-                res.redirect("/campgrounds");
+                res.redirect("/travelgrounds");
                     }
             });
         });
 
+//SHOW Route - View individual posts
+app.get("/travelgrounds/:id",function(req, res) {
+    
+   Travelground.findById(req.params.id,function(err,newTravelground){
+       if(err){
+           console.log("Error");
+       }
+       else{
+             res.render("show",{ travelground : newTravelground });
+       }
+   });
+});
 app.listen(process.env.PORT, process.env.IP);
