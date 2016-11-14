@@ -1,8 +1,8 @@
 <% include ../partials/header %>
 
 
-<div class="container">
-        <header class="jumbotron">
+    <div class="container">
+        <header class="jumbotron item1">
             <div>
                 <h1>Welcome To Travel Camp </h1>
                 <p>View Our hand-picked Travelgrounds from all over the world</p>
@@ -11,23 +11,30 @@
                 </p>
             </div>
         </header>
-        
-         <div class="row text-center" style="display:flex;flex-wrap: wrap;">
+
+        <div class="row text-center" style="display:flex;flex-wrap: wrap;">
 
             <% travelgrounds.forEach(function(travelground){ %>
                 <div class="col-md-3 col-sm-6">
-                    <div class="thumbnail">
-                        <img src="<%= travelground.image%>" alt="Image Not Found">
+                    
+                    <div class="thumbnail item2">
+                        <img class="image" src="<%= travelground.image%>" alt="Image Not Found">
                     <div class="caption">
                         <h4><%= travelground.name %></h4>
                     </div>
-                    <p>
-                        <a href="/travelgrounds/<%= travelground._id %>" class="btn btn-primary">Show Info</a>
-                    </p>
+                    <div class="description">
+	                    <p><%= travelground.description.substring(0,20) %>  ...</p>
+	                </div>
+                    <br>
+                    <div class="extra">
+	                 <a href="/travelgrounds/<%= travelground._id %>" class="ui floated basic blue button"> Read More<i class="right chevron icon"></i>
+        	         </a>
+        	        </div>
+        	        <br>
                     </div>
+                    
                 </div>
                 <% }); %>
         </div>
-</div>
-
- <% include ../partials/footer %>
+    </div>
+            <% include ../partials/footer %>
