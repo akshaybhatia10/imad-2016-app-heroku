@@ -25,7 +25,7 @@ app.post("/signup",function(req, res) {
            return res.render("signup");
        }
        passport.authenticate("local")(req,res,function(){
-           req.flash("success","Welcome To YelpCamp  " + user.username );
+           req.flash("success","Welcome To TravelCamp  " + user.username );
            res.redirect("/travelgrounds");
        });
    }); 
