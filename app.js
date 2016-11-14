@@ -31,7 +31,7 @@ app.use(flash());
 //mongoose.connect("mongodb://localhost/travelground");
 
 //Connecting to mLAB : Cloud hosted mongoDB
-mongodb://travelgrounds:travelgrounds@ds011893.mlab.com:11893/travelgrounds
+//mongodb://travelgrounds:travelgrounds@ds011893.mlab.com:11893/travelgrounds
 mongoose.connect(process.env.DATABASEURL);
 
 //Using body-parser to get form values
