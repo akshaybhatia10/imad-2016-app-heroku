@@ -35,6 +35,12 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
+//Passing variable currentUser to every template
+app.use(function(req,res,next){
+    res.locals.currentUser = req.user;
+    next();
+});
+
 //TRAVELGROUND Routes
 
 //Landing Page
@@ -126,6 +132,47 @@ app.post("/travelgrounds/:id/comments",function(req, res) {
            });
        }
     }); 
+});
+
+//AUTHENTICATION Routes -
+
+//SIGNUP Route -
+app.get("/signup",function(req, res) {
+   res.render("signup"); 
+});
+
+app.post("/signup",function(req, res) {
+   var newUser = new User( { username : req.body.username } );
+   var password = req.body.password ;
+   User.register(newUser,password,function(err,user){
+       if(err){
+           console.log(err);
+           return res.render("signup");
+       }
+       passport.authenticate("local")(req,res,function(){
+           res.redirect("/travelgrounds");
+       });
+   }); 
+});
+
+//LOGIN Route
+app.get("/login",function(req,res){
+   res.render("login"); 
+});
+
+app.post("/login",passport.authenticate("local" ,
+    {
+        successRedirect : "/travelgrounds",
+        failureRedirect : "/login"
+    
+    }),function(req, res) {
+   
+});
+
+//LOGOUT Route
+app.get("/logout",function(req, res) {
+   req.logout();
+   res.redirect("/travelgrounds")
 });
 
 
