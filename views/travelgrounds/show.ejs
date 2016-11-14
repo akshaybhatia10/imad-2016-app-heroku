@@ -9,16 +9,23 @@
                 <li class="list-group-item">Info 3</li>
             </div>
         </div>
-        <div class="col-md-9">
+        <div class="col-md-9 image">
             <div class="thumbnail">
-                <img class="img-responsive" src="<%= travelground.image %>">
+                <img class="img-responsive size" src="<%= travelground.image %>">
                 <div class="caption-full">
-                    <h4 class="pull-right">$9.00/night</h4>
-                    <h4><a><%=travelground.name%></a></h4>
+                    <span class="pull-right"><%=travelground.created.toDateString() %></span>
+                    <h4 style=font-family: "Palatino Linotype;"><a><%= travelground.name %></a></h4>
                     <p><%= travelground.description %></p>
+                    <p>Submitted By <em><strong><%= travelground.author.username %></em></strong></p>
+                    <% if(currentUser && travelground.author.id.equals(currentUser._id)){ %>
+                    <a class="btn btn-warning" href="/travelgrounds/<%= travelground._id %>/edit">Edit</a>
+                    <form id="delete-form" action="/travelgrounds/<%= travelground._id%>?_method=DELETE" method="POST">
+                        <button class="btn btn-danger">Delete</button>
+                    </form>
+                    <% } %>
                 </div>
             </div>
-            <div class="well">
+            <div class="well bg-success">
                 <div class="text-right">
                     <a class="btn btn-success" href="/travelgrounds/<%= travelground._id %>/comments/new">Add New Comment</a>
                 </div>
@@ -26,14 +33,23 @@
                 <% travelground.comments.forEach(function(comment){ %>
                     <div class="row">
                         <div class="col-md-12">
-                            <strong><%= comment.author %></strong>
-                            <span class="pull-right">10 days ago</span>
+                            <strong><%= comment.author.username %></strong>
+                            <span class="pull-right"><%=comment.created.toDateString() %></span>
                             <p>
                                 <%= comment.text %> 
                             </p>
+                            
+                            <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
+                            
+                                <a class="btn btn-xs btn-warning" href="/travelgrounds/<%= travelground._id %>/comments/<%=comment._id%>/edit">Edit</a>
+                                <form id="delete-form" action="/travelgrounds/<%= travelground._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
+                                    <button class="btn btn-xs btn-danger">Delete</button>
+                                </form>
+                                <br>
+                                <% } %>
                         </div>
                     </div>
-                <% }); %>
+                <% }) %>
             </div>
         </div>
     </div>
