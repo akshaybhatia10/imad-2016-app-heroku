@@ -1,8 +1,9 @@
 var express = require("express");
 var app = express.Router();
-var middleware = require("../middleware");
 var Travelground = require("../models/travelground"),
     Comment    = require("../models/comment");
+var middleware = require("../middleware");
+    
 
 
 //COMMENT ROUTES
@@ -59,7 +60,7 @@ app.get("/travelgrounds/:id/comments/:comment_id/edit", middleware.checkCommentO
 });
 
 // COMMENT UPDATE
-app.put("/campgrounds/:id/comments/:comment_id",middleware.checkCommentOwnership,function(req, res){
+app.put("/travelgrounds/:id/comments/:comment_id",middleware.checkCommentOwnership,function(req, res){
    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
       if(err){
           res.redirect("back");

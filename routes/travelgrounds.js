@@ -1,7 +1,8 @@
 var express = require("express");
 var app = express.Router();
-var middleware = require("../middleware");
 var Travelground = require("../models/travelground");
+var middleware = require("../middleware");
+
 
 //TRAVELGROUND Routes
 
