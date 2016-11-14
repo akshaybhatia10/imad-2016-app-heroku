@@ -1,5 +1,6 @@
 var express = require("express");
 var app = express.Router();
+var middleware = require("../middleware");
 var Travelground = require("../models/travelground");
 
 //TRAVELGROUND Routes
@@ -16,12 +17,12 @@ app.get("/travelgrounds",function(req,res){
 });
 
 //NEW - SHOW FORM TO ADD A NEW TRAVELGROUND
-app.get("/travelgrounds/new",function(req, res) {
+app.get("/travelgrounds/new",middleware.isLoggedin,function(req, res) {
     res.render("travelgrounds/new");
 });
 
 //CREATE - ADD THE TRAVELGROUND TO DB
-app.post("/travelgrounds", function(req, res) {
+app.post("/travelgrounds",middleware.isLoggedin, function(req, res) {
             var name = req.body.name;
             var image = req.body.image;
             var description = req.body.description;
@@ -60,7 +61,7 @@ app.get("/travelgrounds/:id",function(req, res) {
 });
 
 //EDIT - EDIT A TRAVELGROUND
-app.get("/travelgrounds/:id/edit",function(req, res){
+app.get("/travelgrounds/:id/edit",middleware.checkCampgroundOwnership,function(req, res){
     Travelground.findById(req.params.id, function(err, travelground){
         res.render("travelgrounds/edit", {travelground: travelground});
         
@@ -68,7 +69,7 @@ app.get("/travelgrounds/:id/edit",function(req, res){
 });
 
 // UPDATE TRAVELGROUND ROUTE
-app.put("/travelgrounds/:id",function(req, res){
+app.put("/travelgrounds/:id",middleware.checkCampgroundOwnership,function(req, res){
     // find and update the correct travelground
     Travelground.findByIdAndUpdate(req.params.id, req.body.travelground, function(err, updatedTravelground){
        if(err){
@@ -81,7 +82,7 @@ app.put("/travelgrounds/:id",function(req, res){
 });
 
 // DESTROY TRAVELGROUND ROUTE
-app.delete("/travelgrounds/:id",function(req, res){
+app.delete("/travelgrounds/:id",middleware.checkCampgroundOwnership,function(req, res){
    Travelground.findByIdAndRemove(req.params.id, function(err){
       if(err){
           res.redirect("/travelgrounds");

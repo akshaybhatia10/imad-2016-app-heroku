@@ -1,5 +1,6 @@
 var express = require("express");
 var app = express.Router();
+var middleware = require("../middleware");
 var Travelground = require("../models/travelground"),
     Comment    = require("../models/comment");
 
@@ -7,7 +8,7 @@ var Travelground = require("../models/travelground"),
 //COMMENT ROUTES
 
 //NEW - FORM TO ADD A NEW COMMENT
-app.get("/travelgrounds/:id/comments/new",function(req, res) {
+app.get("/travelgrounds/:id/comments/new",middleware.isLoggedin,function(req, res) {
     Travelground.findById(req.params.id,function(err,travelground){
        if(err){
            console.log(err);
@@ -19,7 +20,7 @@ app.get("/travelgrounds/:id/comments/new",function(req, res) {
 });
 
 //CREATE - ADD THE COMMENT TO DB
-app.post("/travelgrounds/:id/comments",function(req, res) {
+app.post("/travelgrounds/:id/comments",middleware.isLoggedin,function(req, res) {
    Travelground.findById(req.params.id,function(err,travelground){
        if(err){
            console.log(err);
@@ -47,7 +48,7 @@ app.post("/travelgrounds/:id/comments",function(req, res) {
 });
 
 // COMMENT EDIT ROUTE
-app.get("/travelgrounds/:id/comments/:comment_id/edit", function(req, res){
+app.get("/travelgrounds/:id/comments/:comment_id/edit", middleware.checkCommentOwnership,function(req, res){
    Comment.findById(req.params.comment_id, function(err, comment){
       if(err){
           res.redirect("back");
@@ -58,7 +59,7 @@ app.get("/travelgrounds/:id/comments/:comment_id/edit", function(req, res){
 });
 
 // COMMENT UPDATE
-app.put("/campgrounds/:id/comments/:comment_id",function(req, res){
+app.put("/campgrounds/:id/comments/:comment_id",middleware.checkCommentOwnership,function(req, res){
    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
       if(err){
           res.redirect("back");
@@ -69,7 +70,7 @@ app.put("/campgrounds/:id/comments/:comment_id",function(req, res){
 });
 
 // COMMENT DESTROY ROUTE
-app.delete("/travelgrounds/:id/comments/:comment_id",function(req, res){
+app.delete("/travelgrounds/:id/comments/:comment_id",middleware.checkCommentOwnership,function(req, res){
     Comment.findByIdAndRemove(req.params.comment_id, function(err){
        if(err){
            res.redirect("back");
