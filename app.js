@@ -28,7 +28,7 @@ app.use(methodOverride("_method"));
 app.use(flash());
 
 //Local Mongo DB
-mongoose.connect("mongodb://localhost/travelground");
+//mongoose.connect("mongodb://localhost/travelground");
 
 //Connecting to mLAB : Cloud hosted mongoDB
 mongoose.connect("mongodb://travelgrounds:travelgrounds@ds011893.mlab.com:11893/travelgrounds");
