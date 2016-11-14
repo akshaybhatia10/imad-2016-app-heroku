@@ -1,18 +1,39 @@
-var express = require("express"),
-    mongoose = require("mongoose"),
-    bodyParser = require("body-parser"),
-    Comment     = require("./models/comment"),
-    Travelground = require("./models/travelground"),
-    app     = express();
-    
+var express       = require("express"),
+    mongoose      = require("mongoose"),
+    bodyParser    = require("body-parser"),
+    Comment       = require("./models/comment"),
+    Travelground  = require("./models/travelground"),
+    app           = express(),
+    passport      = require("passport"),
+    LocalStrategy = require("passport-local"),
+    User          = require("./models/user");
+
+//Promise to make mongoose non-depriciated    
 mongoose.Promise = global.Promise;
+//Setting templating engine as EJS
 app.set("view engine", "ejs");
+app.use(express.static(__dirname + "/public"));
+//Local Mongo DB
 mongoose.connect("mongodb://localhost/travelground");
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+//PassportJS Authentication
 
+//Creating a session Token
+app.use(require("express-session")({
+    secret:"Yo Dude This is YelpCamp",
+    resave:false,
+    saveUninitialized: false
+}));
+
+//PassportJS Confi Setup
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 //TRAVELGROUND Routes
 
@@ -106,5 +127,7 @@ app.post("/travelgrounds/:id/comments",function(req, res) {
        }
     }); 
 });
+
+
 
 app.listen(process.env.PORT, process.env.IP);
