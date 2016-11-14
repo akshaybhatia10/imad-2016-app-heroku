@@ -1,20 +1,36 @@
 var express       = require("express"),
     mongoose      = require("mongoose"),
+    flash         = require("connect-flash"),
+    methodOverride= require("method-override"), 
     bodyParser    = require("body-parser"),
-    Comment       = require("./models/comment"),
-    Travelground  = require("./models/travelground"),
     app           = express(),
     passport      = require("passport"),
     LocalStrategy = require("passport-local"),
     User          = require("./models/user");
 
+var travelgroundRoutes = require("./routes/travelgrounds"),    
+    commentRoutes = require("./routes/comments"),
+    indexRoutes = require("./routes/index")
+
 //Promise to make mongoose non-depriciated    
 mongoose.Promise = global.Promise;
+
 //Setting templating engine as EJS
 app.set("view engine", "ejs");
+
+//Path for /public CSS files
 app.use(express.static(__dirname + "/public"));
+
+//Using method-override for PUT and DELETE requests
+app.use(methodOverride("_method"));
+
+//Using connect-flash for user messages
+app.use(flash());
+
 //Local Mongo DB
 mongoose.connect("mongodb://localhost/travelground");
+
+//Using body-parser to get form values
 app.use(bodyParser.urlencoded({
     extended: true
 }));
@@ -23,7 +39,7 @@ app.use(bodyParser.urlencoded({
 
 //Creating a session Token
 app.use(require("express-session")({
-    secret:"Yo Dude This is YelpCamp",
+    secret:"Yo This is Travel Camp",
     resave:false,
     saveUninitialized: false
 }));
@@ -35,146 +51,18 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-//Passing variable currentUser to every template
+//Passing 3 variables to every template
 app.use(function(req,res,next){
     res.locals.currentUser = req.user;
+    res.locals.error     = req.flash("error");
+    res.locals.success     = req.flash("success");
     next();
 });
 
-//TRAVELGROUND Routes
-
-//Landing Page
-app.get("/",function(req,res){
-    res.render("index");
-});    
-
-//Posts Page
-app.get("/travelgrounds",function(req,res){
-    Travelground.find({},function(err,travelgrounds){
-        if(err){
-            console.log(err);
-        }else{
-            res.render("travelgrounds/travelgrounds",{travelgrounds : travelgrounds });
-        }
-    });
-});
-
-//NEW Route 
-app.get("/travelgrounds/new", function(req, res) {
-    res.render("travelgrounds/new");
-});
-
-//CREATE Route 
-app.post("/travelgrounds", function(req, res) {
-            var name = req.body.name;
-            var image = req.body.image;
-            var description = req.body.description;
-            
-            var newTravelground = {
-                name: name,
-                image: image, 
-                description:description 
-            };
-             Travelground.create(newTravelground, function(err, travelgrounds) {
-                if (err) {
-                    console.log("Error");
-                    }
-                else {
-                res.redirect("/travelgrounds");
-                    }
-            });
-        });
-
-//SHOW Route - View individual posts
-app.get("/travelgrounds/:id",function(req, res) {
-    
-   Travelground.findById(req.params.id).populate("comments").exec(function(err,newTravelground){
-       if(err){
-           console.log("Error");
-       }
-       else{
-             res.render("travelgrounds/show",{ travelground : newTravelground });
-       }
-   });
-});
-
-//COMMENT ROUTES
-
-//NEW - comment
-app.get("/travelgrounds/:id/comments/new",function(req, res) {
-    Travelground.findById(req.params.id,function(err,travelground){
-       if(err){
-           console.log(err);
-       } else{
-            res.render("comments/new",{travelground:travelground}); 
-       }
-
-    });    
-});
-
-//POST - comment
-app.post("/travelgrounds/:id/comments",function(req, res) {
-   Travelground.findById(req.params.id,function(err,travelground){
-       if(err){
-           console.log(err);
-           res.redirect("/travelgrounds");
-              } else{
-           Comment.create(req.body.comment,function(err,comment){
-               if(err){
-                   console.log(err);
-               }else
-                 {
-               travelground.comments.push(comment);
-               travelground.save();
-               res.redirect("/travelgrounds/" + travelground._id);
-                 }
-               
-           });
-       }
-    }); 
-});
-
-//AUTHENTICATION Routes -
-
-//SIGNUP Route -
-app.get("/signup",function(req, res) {
-   res.render("signup"); 
-});
-
-app.post("/signup",function(req, res) {
-   var newUser = new User( { username : req.body.username } );
-   var password = req.body.password ;
-   User.register(newUser,password,function(err,user){
-       if(err){
-           console.log(err);
-           return res.render("signup");
-       }
-       passport.authenticate("local")(req,res,function(){
-           res.redirect("/travelgrounds");
-       });
-   }); 
-});
-
-//LOGIN Route
-app.get("/login",function(req,res){
-   res.render("login"); 
-});
-
-app.post("/login",passport.authenticate("local" ,
-    {
-        successRedirect : "/travelgrounds",
-        failureRedirect : "/login"
-    
-    }),function(req, res) {
-   
-});
-
-//LOGOUT Route
-app.get("/logout",function(req, res) {
-   req.logout();
-   res.redirect("/travelgrounds")
-});
-
+//Using all the routes
+app.use(travelgroundRoutes);
+app.use(commentRoutes);
+app.use(indexRoutes);
 
 
 app.listen(process.env.PORT, process.env.IP);
