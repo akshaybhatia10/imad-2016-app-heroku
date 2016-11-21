@@ -2,12 +2,8 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <p class="lead">Travel Camp</p>
-            <div class="list-group">
-                <li class="list-group-item active">Info 1</li>
-                <li class="list-group-item">Info 2</li>
-                <li class="list-group-item">Info 3</li>
-            </div>
+            <p class="lead text-center"><i class="fa fa-globe" aria-hidden="true"></i>   Travel Camp</p>
+            
         </div>
         <div class="col-md-9 image">
             <div class="thumbnail">
@@ -18,32 +14,36 @@
                     <p><%= travelground.description %></p>
                     <p>Submitted By <em><strong><%= travelground.author.username %></em></strong></p>
                     <% if(currentUser && travelground.author.id.equals(currentUser._id)){ %>
-                    <a class="btn btn-warning" href="/travelgrounds/<%= travelground._id %>/edit">Edit</a>
+                    <a class="btn btn-warning" href="/travelgrounds/<%= travelground._id %>/edit">Edit  <i class="fa fa-edit" aria-hidden="true"></i>  
+                    </a>
                     <form id="delete-form" action="/travelgrounds/<%= travelground._id%>?_method=DELETE" method="POST">
-                        <button class="btn btn-danger">Delete</button>
+                        <button class="btn btn-danger">Delete   <i class="fa fa-times" aria-hidden="true"></i></button>
                     </form>
                     <% } %>
                 </div>
             </div>
             <div class="well bg-success">
                 <div class="text-right">
-                    <a class="btn btn-success" href="/travelgrounds/<%= travelground._id %>/comments/new">Add New Comment</a>
+                    <a class="btn btn-success" href="/travelgrounds/<%= travelground._id %>/comments/new">Add New Comment   <i class="fa fa-plus" aria-hidden="true"></i>
+                    </a>
                 </div>
                 <hr>
                 <% travelground.comments.forEach(function(comment){ %>
                     <div class="row">
                         <div class="col-md-12">
                             <strong><%= comment.author.username %></strong>
-                            <span class="pull-right"><%=comment.created.toDateString() %></span>
+                            <span class="pull-right"><%=moment(comment.created).fromNow() %></span>
                             <p>
                                 <%= comment.text %> 
                             </p>
                             <br>
                             <% if(currentUser && comment.author.id.equals(currentUser._id)){ %>
                             
-                                <a class="btn btn-xs btn-warning" href="/travelgrounds/<%= travelground._id %>/comments/<%=comment._id%>/edit">Edit</a>
+                                <a class="btn btn-xs btn-warning" href="/travelgrounds/<%= travelground._id %>/comments/<%=comment._id%>/edit">Edit
+                                <i class="fa fa-edit" aria-hidden="true"></i>
+                                </a>
                                 <form id="delete-form" action="/travelgrounds/<%= travelground._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
-                                    <button class="btn btn-xs btn-danger">Delete</button>
+                                    <button class="btn btn-xs btn-danger">Delete   <i class="fa fa-times" aria-hidden="true"></i></button>
                                 </form>
                                 <br>
                                 <% } %>
