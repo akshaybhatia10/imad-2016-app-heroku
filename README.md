@@ -4,11 +4,11 @@
 
 This project requires **NodeJS** and the following libraries installed:
 
-- [PassportJS]
-- [ExpressJS]
-- [MongoDB]
+- PassportJS
+- ExpressJS
+- MongoDB
 
-## https://www.akshaybhatia10.herokuapp.com
+## akshaybhatia10.herokuapp.com
 
 
 ### About
